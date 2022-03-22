@@ -10,7 +10,7 @@ const completeList = document.getElementById('complete-list');
 const onHoldList = document.getElementById('on-hold-list');
 
 // Items
-let updatedOnLoad = false;
+let updateOnLoad = false;
 
 // Initialize Arrays
 let backlogListArray = [];
@@ -19,8 +19,8 @@ let completeListArray = [];
 let onHoldListArray = [];
 
 // Drag Functionality
-let draggedItem
-let currentColumn
+let draggedItem;
+let currentColumn;
 
 // Get Arrays from localStorage if available, set default values if not
 function getSavedColumns() {
@@ -53,59 +53,72 @@ function createItemEl(columnEl, column, item, index) {
   console.log('index:', index);
   // List Item
   const listEl = document.createElement('li');
-
-  listEl.textContent = item;
-  columnEl.appendChild(listEl)
-
   listEl.classList.add('drag-item');
+  listEl.textContent = item;
   listEl.draggable = true;
-  listEl.setAttribute('ondragstart','drag(event)');
-  
+  listEl.setAttribute('ondragstart', 'drag(event)'); 
+  //Append
+  columnEl.appendChild(listEl);
 
 }
 
 // Update Columns in DOM - Reset HTML, Filter Array, Update localStorage
 function updateDOM() {
   // Check localStorage once
-  if(!updatedOnLoad){
+  if (!updateOnLoad){
     getSavedColumns();
   }
-
-  backlogList.textContent ="";
+  // Backlog Column
+  backlogList.textContent = '';
   backlogListArray.forEach((backlogItem, index) => {
     createItemEl(backlogList, 0, backlogItem, index);
-  })
-
-  progressList.textContent ="";
+  });
+  // Progress Column
+  progressList.textContent = '';
   progressListArray.forEach((progressItem, index) => {
     createItemEl(progressList, 1, progressItem, index);
-  })
-
-  completeList.textContent ="";
+  });
+  // Complete Column
+  completeList.textContent = '';
   completeListArray.forEach((completeItem, index) => {
     createItemEl(completeList, 2, completeItem, index);
-  })
-
-  onHoldList.textContent ="";
+  });
+  // On Hold Column
+  onHoldList.textContent = '';
   onHoldListArray.forEach((onHoldItem, index) => {
     createItemEl(onHoldList, 3, onHoldItem, index);
-  })
-  
-  
-  
-  // Backlog Column
-
-  // Progress Column
-
-  // Complete Column
-
-  // On Hold Column
-
+  });
   // Run getSavedColumns only once, Update Local Storage
 
 
 }
 
+// Function which recognizes when you start dragging elems
 function drag(e){
   draggedItem = e.target;
 }
+
+// Function allowing items to be dropped
+function allowDrop(e){
+  e.preventDefault();
+}
+
+function drop(e){
+  e.preventDefault();
+  //Removing extra padding and backgroud color
+  itemLists.forEach((column) => {
+    column.classList.remove('over');
+  }); 
+  // Adding item to the column
+  const parent = itemLists[currentColumn];
+  parent.appendChild(draggedItem); 
+}
+
+// Function which detects when dragged items enters col area
+function dragEnter(column){
+  itemLists[column].classList.add('over');
+  currentColumn = column;
+} 
+
+// On Load
+updateDOM();
