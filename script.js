@@ -90,7 +90,34 @@ function updateDOM() {
   });
   // Run getSavedColumns only once, Update Local Storage
 
+  updateSavedColumns();
+  updateOnLoad = true;
 
+}
+
+function rebuildArray(){
+  backlogListArray = [];
+  progressListArray = [];
+  completeListArray = [];
+  onHoldListArray = [];
+
+  for(let i = 0; i < backlogList.children.length; i++){
+    backlogListArray.push(backlogList.children[i].textContent);
+  }
+
+  for(let i = 0; i < progressList.children.length; i++){
+    progressListArray.push(progressList.children[i].textContent);
+  }
+
+  for(let i = 0; i < completeList.children.length; i++){
+    completeListArray.push(completeList.children[i].textContent);
+  }
+
+  for(let i = 0; i < onHoldList.children.length; i++){
+    onHoldListArray.push(onHoldList.children[i].textContent);
+  }
+
+  updateDOM();
 }
 
 // Function which recognizes when you start dragging elems
@@ -112,6 +139,8 @@ function drop(e){
   // Adding item to the column
   const parent = itemLists[currentColumn];
   parent.appendChild(draggedItem); 
+  rebuildArray();
+  
 }
 
 // Function which detects when dragged items enters col area
@@ -119,6 +148,17 @@ function dragEnter(column){
   itemLists[column].classList.add('over');
   currentColumn = column;
 } 
+
+function showInputBox(column){
+  addBtns[column].style.visibility = 'hidden';
+  saveItemBtns[column].style.display = 'flex';
+  addItemContainers[column].style.display = 'flex';
+}
+
+function hideInputBox(column){
+  saveItemBtns[column].style.display = 'none';
+  addItemContainers[column].style.display = 'none';
+}
 
 // On Load
 updateDOM();
